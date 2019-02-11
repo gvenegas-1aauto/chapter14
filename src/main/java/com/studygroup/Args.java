@@ -35,6 +35,8 @@ public class Args {
 
         if (schema.length() == 0 && args.length == 0) {
             return true;
+        } else if (schema.split(",").length != args.length) {
+            this.valid = false;
         }
 
         parseSchema();

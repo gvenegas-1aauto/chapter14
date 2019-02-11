@@ -17,10 +17,6 @@ public class ArgsTest {
     }
 
 
-///    @Rule
-///    public ExpectedException exception = ExpectedException.none();
-
-
     @Test
     public void testWithNoSchemaButWithOneArgument() throws Exception {
         Args args = new Args("", new String[]{"-x"});
@@ -39,21 +35,14 @@ public class ArgsTest {
 
     @Test
     public void testNonLetterSchema() throws Exception {
-//        exception.expect(ParseException.class);
-//        exception.expectMessage("Bad character:*in Args format: *");
-//        new Args("*", new String[]{});
 
         Assertions.assertThrows(ParseException.class, () -> new Args("*", new String[]{}), "Bad character:*in Args format: *");
 
-
     }
 
-    // FIXED!
+
     @Test
     public void testInvalidArgumentFormat() throws Exception {
-//        exception.expect(ParseException.class);
-//        exception.expectMessage("Argument: f has invalid format: ~.");
-//        new Args("f~", new String[]{});
 
         Assertions.assertThrows(ParseException.class, () -> new Args("f~", new String[]{}), "Argument: f has invalid format: ~.");
 
@@ -109,11 +98,11 @@ public class ArgsTest {
     }
 
     // Currently fails...
-//    @Test
-//    public void testInvalidArgumentValueFormat() throws Exception {
-//        Args args = new Args("x,y", new String[]{"xy", "true", "false"});
-//        assertEquals(false, args.isValid());
-//    }
+    @Test
+    public void testInvalidArgumentValueFormat() throws Exception {
+        Args args = new Args("x,y", new String[]{"xy", "true", "false"});
+        assertEquals(false, args.isValid());
+    }
 
     @Test
     public void testSimpleStringPresent() throws Exception {
