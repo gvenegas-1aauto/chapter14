@@ -3,15 +3,13 @@ package com.studygroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ArgsTest {
 
     @Test
-    public void testCreateWithNoSchemaOrArguments() throws ParseException {
+    public void testCreateWithNoSchemaOrArguments() throws Exception {
         Args args = new Args("", new String[0]);
         assertEquals(0, args.cardinality());
     }
@@ -19,24 +17,22 @@ public class ArgsTest {
 
     @Test
     public void testWithNoSchemaButWithOneArgument() throws Exception {
-        Args args = new Args("", new String[]{"-x"});
-        assertEquals(false, args.isValid());
-        assertEquals("Argument(s) -x unexpected.", args.errorMessage());
+
+        Assertions.assertThrows(ArgsException.class, () -> new Args("", new String[]{"-x"}), "Bad character:*in Args format: *");
+
     }
 
 
     @Test
     public void testWithNoSchemaButWithMultipleArguments() throws Exception {
-        Args args = new Args("", new String[]{"-x", "-y"});
-        assertEquals(false, args.isValid());
-        assertEquals("Argument(s) -xy unexpected.", args.errorMessage());
+        Assertions.assertThrows(ArgsException.class, () -> new Args("", new String[]{"-x", "-y"}), "Argument -x unexpected.");
     }
 
 
     @Test
     public void testNonLetterSchema() throws Exception {
 
-        Assertions.assertThrows(ParseException.class, () -> new Args("*", new String[]{}), "Bad character:*in Args format: *");
+        Assertions.assertThrows(ArgsException.class, () -> new Args("*", new String[]{}), "Bad character:*in Args format: *");
 
     }
 
@@ -44,7 +40,7 @@ public class ArgsTest {
     @Test
     public void testInvalidArgumentFormat() throws Exception {
 
-        Assertions.assertThrows(ParseException.class, () -> new Args("f~", new String[]{}), "Argument: f has invalid format: ~.");
+        Assertions.assertThrows(ArgsException.class, () -> new Args("f~", new String[]{}), "Argument: f has invalid format: ~.");
 
     }
 
@@ -97,11 +93,11 @@ public class ArgsTest {
         assertEquals(true, args.getBoolean('y'));
     }
 
-    // Currently fails...
     @Test
     public void testInvalidArgumentValueFormat() throws Exception {
-        Args args = new Args("x,y", new String[]{"xy", "true", "false"});
-        assertEquals(false, args.isValid());
+
+        Assertions.assertThrows(ArgsException.class, () -> new Args("x,y", new String[]{"xy", "true", "false"}), "'xy' is not a valid argument format.");
+
     }
 
     @Test
@@ -114,10 +110,7 @@ public class ArgsTest {
 
     @Test
     public void testMissingStringArgument() throws Exception {
-        Args args = new Args("x*", new String[]{"-x"});
-        assertEquals(false, args.isValid());
-        assertEquals("Could not find string parameter for -x.",
-                args.errorMessage());
+        Assertions.assertThrows(ArgsException.class, () -> new Args("x*", new String[]{"-x"}), "Could not find string parameter for -x.");
     }
 
     @Test
@@ -130,17 +123,13 @@ public class ArgsTest {
 
     @Test
     public void testInvalidInteger() throws Exception {
-        Args args = new Args("x#", new String[]{"-x", "Forty two"});
-        assertEquals(false, args.isValid());
-        assertEquals("Argument -x expects an integer but was 'Forty two'.",
-                args.errorMessage());
+        Assertions.assertThrows(ArgsException.class, () -> new Args("x#", new String[]{"-x", "Forty two"}), "");
     }
 
     @Test
     public void testMissingInteger() throws Exception {
-        Args args = new Args("x#", new String[]{"-x"});
-        assertEquals(false, args.isValid());
-        assertEquals("Could not find integer parameter for -x.",
-                args.errorMessage());
+
+        Assertions.assertThrows(ArgsException.class, () -> new Args("x#", new String[]{"-x"}), "Could not find integer parameter for -x.");
+
     }
 }
